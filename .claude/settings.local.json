@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(gh:*)",
+      "Bash(cd:*)",
+      "Bash(curl:*)",
+      "Bash(unzip:*)"
     ]
   }
 }
