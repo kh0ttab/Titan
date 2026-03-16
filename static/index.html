@@ -332,14 +332,9 @@ function(a,b,c){if(!Vd(b))throw Error(m(200));return Wd(null,a,b,!1,c)};Q.unmoun
     if(window.__savedDefine) { define = window.__savedDefine; }
   </script>
 
-  <!-- Receive API key from parent Streamlit frame -->
+  <!-- Pick up API key from parent iframe -->
   <script>
-    window.GROQ_API_KEY = "";
-    window.addEventListener('message', function(e) {
-      if (e.data && e.data.type === 'groq-key') { window.GROQ_API_KEY = e.data.key; }
-    });
-    // Tell parent we're ready
-    if (window.parent !== window) { window.parent.postMessage('titan-ready', '*'); }
+    try { window.GROQ_API_KEY = window.parent.GROQ_API_KEY || ""; } catch(e) { window.GROQ_API_KEY = ""; }
   </script>
 
   <!-- App -->

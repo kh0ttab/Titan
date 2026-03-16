@@ -9,32 +9,36 @@ st.set_page_config(
 
 groq_key = st.secrets.get("GROQ_API_KEY", "")
 
-# Full-page iframe pointing to the static HTML file
+# Hide Streamlit UI
 st.markdown(
-    f"""
+    """
     <style>
-        #MainMenu {{visibility: hidden;}}
-        header {{visibility: hidden;}}
-        footer {{visibility: hidden;}}
-        .stAppDeployButton {{display: none;}}
-        .block-container {{padding: 0 !important; max-width: 100% !important;}}
-        .stMainBlockContainer {{padding: 0 !important;}}
+        #MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        .stAppDeployButton {display: none;}
+        .block-container {padding: 0 !important; max-width: 100% !important;}
+        .stMainBlockContainer {padding: 0 !important;}
     </style>
-    <script>
-        // Pass API key to the iframe once it loads
-        window.addEventListener('message', function(e) {{
-            if (e.data === 'titan-ready') {{
-                document.getElementById('titan-frame').contentWindow.postMessage(
-                    {{type: 'groq-key', key: '{groq_key}'}}, '*'
-                );
-            }}
-        }});
-    </script>
-    <iframe
-        id="titan-frame"
-        src="app/static/index.html"
-        style="width:100%;height:100vh;border:none;position:fixed;top:0;left:0;z-index:9999;"
-    ></iframe>
     """,
     unsafe_allow_html=True,
+)
+
+# Tiny iframe wrapper — loads the full React app from static file
+# (avoids the srcdoc size/sandbox issues that caused the black screen)
+st.components.v1.html(
+    f"""
+    <html>
+    <body style="margin:0;padding:0;overflow:hidden;background:#060b14;">
+    <script>window.GROQ_API_KEY="{groq_key}";</script>
+    <iframe
+        src="/app/static/index.html"
+        style="width:100%;height:100vh;border:none;position:absolute;top:0;left:0;"
+        allow="microphone"
+    ></iframe>
+    </body>
+    </html>
+    """,
+    height=900,
+    scrolling=False,
 )
