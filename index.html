@@ -398,8 +398,10 @@ const {
 } = Recharts;
 
 // ── GROQ LLM CONFIG ─────────────────────────────────────────────────────────
-const GROQ_KEY = window.GROQ_API_KEY || "";
-const GROQ_MODEL = "llama-3.1-8b-instant"; // fast & free: llama-3.1-8b-instant, gemma2-9b-it, mixtral-8x7b-32768
+// Key is set via: (1) window.GROQ_API_KEY global, (2) localStorage, or (3) user enters in AI page
+let GROQ_KEY = window.GROQ_API_KEY || localStorage.getItem("groq_key") || "";
+const GROQ_MODEL = "llama-3.1-8b-instant";
+function setGroqKey(k) { GROQ_KEY = k; localStorage.setItem("groq_key", k); }
 
 async function llmChat(messages, {
   system,
@@ -8846,7 +8848,13 @@ function AIPage({
     }
   }, /*#__PURE__*/React.createElement(STitle, {
     accent: T.accent
-  }, "AI Assistant"), /*#__PURE__*/React.createElement("div", {
+  }, "AI Assistant"), !GROQ_KEY && /*#__PURE__*/React.createElement("div", {
+    style: {background:T.surface,border:"1px solid "+T.amber,borderRadius:7,padding:"10px 14px",marginBottom:12,display:"flex",gap:8,alignItems:"center"}
+  }, /*#__PURE__*/React.createElement("span", {style:{fontSize:11,color:T.amber}}, "Enter your free Groq API key to enable AI:"), /*#__PURE__*/React.createElement("input", {
+    style: {background:T.bg,border:"1px solid "+T.border,borderRadius:4,padding:"5px 8px",color:T.text,fontSize:11,flex:1,outline:"none",fontFamily:"'JetBrains Mono',monospace"},
+    placeholder: "gsk_...",
+    onKeyDown: function(e){ if(e.key==="Enter"&&e.target.value.trim()){setGroqKey(e.target.value.trim());location.reload();} }
+  }), /*#__PURE__*/React.createElement("span", {style:{fontSize:9,color:T.muted}}, "Get one free at console.groq.com")), /*#__PURE__*/React.createElement("div", {
     style: {
       display: "flex",
       gap: 5,
